@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banking Management System</title>
+<style>
+  :root{
+    --ink:#10283f; --ink-2:#1d4263; --paper:#f4f6f3; --card:#ffffff;
+    --line:#d5dbd6; --brass:#c8901f; --ok:#1f7a4d; --bad:#b3372c; --muted:#5b6b78;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  :focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+
+  header{background:var(--ink);color:#fff;position:sticky;top:0;z-index:5}
+  .bar{max-width:1000px;margin:auto;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
+  .brand{font-family:Georgia,serif;font-size:1.3rem;font-weight:700;margin-right:auto}
+  .brand span{color:var(--brass)}
+  nav{display:flex;flex-wrap:wrap;gap:4px}
+  nav a{padding:6px 12px;border-radius:6px;font-size:.92rem;color:#cfdbe6}
+  nav a:hover{background:var(--ink-2);color:#fff}
+  nav a.out{color:#ffb4ab}
+
+  main{max-width:1000px;margin:auto;padding:28px 16px 60px}
+  .page{display:none}
+  .page.show{display:block}
+
+  h1{font-family:Georgia,serif;font-size:1.9rem;margin-bottom:6px}
+  .sub{color:var(--muted);margin-bottom:22px}
+
+  .hero{background:var(--ink);color:#fff;border-radius:14px;padding:44px 28px;margin-bottom:24px}
+  .hero h1{font-size:2.3rem;max-width:16ch}
+  .hero p{color:#cfdbe6;max-width:46ch;margin:10px 0 22px}
+  .btn{display:inline-block;border:0;cursor:pointer;font:inherit;font-weight:600;background:var(--brass);color:#1b1404;padding:10px 20px;border-radius:8px}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.dark{background:var(--ink);color:#fff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .tile{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--brass);border-radius:8px;padding:16px}
+  .tile b{display:block;margin-bottom:4px}
+  .tile p{color:var(--muted);font-size:.92rem}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;max-width:520px}
+  label{display:block;font-weight:600;font-size:.92rem;margin:14px 0 5px}
+  input,select,textarea{width:100%;font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:#fff}
+  input:focus,select:focus,textarea:focus{border-color:var(--ink-2);outline:none}
+  .panel .btn{margin-top:20px}
+
+  .wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;min-width:520px}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:#e9eeea;font-size:.88rem}
+  tr:last-child td{border-bottom:0}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .in{color:var(--ok);font-weight:600}
+  .outc{color:var(--bad);font-weight:600}
+  .badge{padding:2px 10px;border-radius:99px;background:#e3edf5;font-size:.82rem}
+
+  #msg{display:none;max-width:520px;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-weight:600}
+  #msg.ok{display:block;background:#dff1e7;color:var(--ok)}
+  #msg.err{display:block;background:#f8dedb;color:var(--bad)}
+  .hide{display:none}
+
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px}
+  @media (max-width:560px){.hero h1{font-size:1.8rem}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <a class="brand" href="#home">Taka<span>Bank</span></a>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#admin">Admin Login</a>
+      <a href="#register">Registration</a>
+      <a href="#accounts">Accounts</a>
+      <a href="#deposit">Deposit</a>
+      <a href="#withdraw">Withdraw</a>
+      <a href="#history">History</a>
+      <a class="out" href="#logout">Log out</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div id="msg" role="status"></div>
+
+  <section class="page" id="home">
+    <div class="hero">
+      <h1>Banking Management System</h1>
+      <p>Register customers, manage accounts, and record every deposit and withdrawal in one place.</p>
+      <a class="btn" href="#admin">Admin login</a>
+    </div>
+    <div class="grid">
+      <div class="tile"><b>Customers</b><p id="s-cust">0</p></div>
+      <div class="tile"><b>Total balance</b><p id="s-bal">৳ 0</p></div>
+      <div class="tile"><b>Transactions</b><p id="s-tx">0</p></div>
+    </div>
+  </section>
+
+  <section class="page" id="admin">
+    <h1>Admin login</h1>
+    <p class="sub">Demo login: username <b>admin</b>, password <b>1234</b></p>
+    <form class="panel" id="f-login">
+      <label for="u">Username</label><input id="u" required>
+      <label for="p">Password</label><input id="p" type="password" required>
+      <button class="btn dark" type="submit">Log in</button>
+    </form>
+  </section>
+
+  <section class="page" id="register">
+    <h1>Customer registration</h1>
+    <p class="sub">A new account is created automatically.</p>
+    <form class="panel" id="f-reg">
+      <label for="n">Name</label><input id="n" required>
+      <label for="ph">Phone</label><input id="ph" type="tel" pattern="[0-9]{11}" title="11 digit phone number" required>
+      <label for="ad">Address</label><textarea id="ad" rows="3" required></textarea>
+      <label for="ty">Account type</label>
+      <select id="ty"><option>Savings</option><option>Current</option></select>
+      <label for="ib">Opening balance (৳)</label><input id="ib" type="number" min="0" value="0" required>
+      <button class="btn dark" type="submit">Register customer</button>
+    </form>
+  </section>
+
+  <section class="page" id="accounts">
+    <h1>Account management</h1>
+    <p class="sub">All customer accounts.</p>
+    <div class="wrap"><table>
+      <thead><tr><th>Account no.</th><th>Customer</th><th>Phone</th><th>Type</th><th class="num">Balance (৳)</th></tr></thead>
+      <tbody id="t-acc"></tbody>
+    </table></div>
+  </section>
+
+  <section class="page" id="deposit">
+    <h1>Deposit</h1>
+    <p class="sub">Add money to an account.</p>
+    <form class="panel" id="f-dep">
+      <label for="da">Account</label><select id="da" class="acc-select" required></select>
+      <label for="dm">Amount (৳)</label><input id="dm" type="number" min="1" required>
+      <button class="btn dark" type="submit">Deposit</button>
+    </form>
+  </section>
+
+  <section class="page" id="withdraw">
+    <h1>Withdraw</h1>
+    <p class="sub">Take money out of an account.</p>
+    <form class="panel" id="f-wd">
+      <label for="wa">Account</label><select id="wa" class="acc-select" required></select>
+      <label for="wm">Amount (৳)</label><input id="wm" type="number" min="1" required>
+      <button class="btn dark" type="submit">Withdraw</button>
+    </form>
+  </section>
+
+  <section class="page" id="history">
+    <h1>Transaction history</h1>
+    <p class="sub">Latest transactions first.</p>
+    <div class="wrap"><table>
+      <thead><tr><th>Date</th><th>Account no.</th><th>Type</th><th class="num">Amount (৳)</th><th class="num">Balance after (৳)</th></tr></thead>
+      <tbody id="t-his"></tbody>
+    </table></div>
+  </section>
+
+  <section class="page" id="logout">
+    <h1>You have logged out</h1>
+    <p class="sub">See you next time.</p>
+    <a class="btn dark" href="#admin">Log in again</a>
+  </section>
+</main>
+
+<footer>Banking Management System — demo project</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const load = (k, d) => JSON.parse(localStorage.getItem(k) || JSON.stringify(d));
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const money = n => Number(n).toLocaleString('en-US', {minimumFractionDigits: 2});
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let accounts = load('accounts', []);   // {no, name, phone, address, type, balance}
+let txs      = load('txs', []);        // {date, no, type, amount, after}
+let loggedIn = sessionStorage.getItem('admin') === '1';
+
+const PUBLIC = ['home', 'admin', 'logout'];
+
+function notify(text, ok = true) {
+  const m = $('msg'); m.textContent = text; m.className = ok ? 'ok' : 'err';
+  setTimeout(() => m.className = '', 3500);
+}
+
+function render() {
+  $('s-cust').textContent = accounts.length;
+  $('s-bal').textContent = '৳ ' + money(accounts.reduce((s, a) => s + a.balance, 0));
+  $('s-tx').textContent = txs.length;
+
+  $('t-acc').innerHTML = accounts.length ? accounts.map(a =>
+    `<tr><td>${a.no}</td><td>${esc(a.name)}</td><td>${esc(a.phone)}</td>
+     <td><span class="badge">${a.type}</span></td><td class="num">${money(a.balance)}</td></tr>`).join('')
+    : '<tr><td colspan="5">No accounts yet. Register a customer first.</td></tr>';
+
+  $('t-his').innerHTML = txs.length ? txs.map(t =>
+    `<tr><td>${t.date}</td><td>${t.no}</td>
+     <td class="${t.type === 'Deposit' ? 'in' : 'outc'}">${t.type}</td>
+     <td class="num">${t.type === 'Deposit' ? '+' : '−'}${money(t.amount)}</td>
+     <td class="num">${money(t.after)}</td></tr>`).join('')
+    : '<tr><td colspan="5">No transactions yet.</td></tr>';
+
+  document.querySelectorAll('.acc-select').forEach(s => {
+    s.innerHTML = accounts.map(a => `<option value="${a.no}">${a.no} - ${esc(a.name)} (৳ ${money(a.balance)})</option>`).join('');
+  });
+  document.querySelectorAll('nav a').forEach(a => {
+    const p = a.getAttribute('href').slice(1);
+    a.classList.toggle('hide', loggedIn ? p === 'admin' : !PUBLIC.includes(p));
+  });
+}
+
+function route() {
+  let page = location.hash.slice(1) || 'home';
+  if (!document.getElementById(page)) page = 'home';
+  if (!loggedIn && !PUBLIC.includes(page)) { page = 'admin'; notify('Please log in as admin first.', false); }
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('show', p.id === page));
+  render();
+}
+window.addEventListener('hashchange', route);
+
+$('f-login').onsubmit = e => {
+  e.preventDefault();
+  if ($('u').value === 'admin' && $('p').value === '1234') {
+    loggedIn = true; sessionStorage.setItem('admin', '1');
+    e.target.reset(); location.hash = '#accounts'; route(); notify('Logged in.');
+  } else notify('Wrong username or password.', false);
+};
+
+$('f-reg').onsubmit = e => {
+  e.preventDefault();
+  const no = 1001 + accounts.length;
+  const bal = Number($('ib').value);
+  accounts.push({no, name: $('n').value.trim(), phone: $('ph').value, address: $('ad').value.trim(), type: $('ty').value, balance: bal});
+  if (bal > 0) txs.unshift({date: new Date().toLocaleString(), no, type: 'Deposit', amount: bal, after: bal});
+  save('accounts', accounts); save('txs', txs);
+  e.target.reset(); location.hash = '#accounts'; route();
+  notify('Customer registered. Account number: ' + no);
+};
+
+function move(type, accId, amtId) {
+  const a = accounts.find(x => x.no == $(accId).value);
+  const amt = Number($(amtId).value);
+  if (!a) return notify('Select an account first.', false);
+  if (amt <= 0) return notify('Enter a valid amount.', false);
+  if (type === 'Withdraw' && amt > a.balance) return notify('Not enough balance. Available: ৳ ' + money(a.balance), false);
+  a.balance += type === 'Deposit' ? amt : -amt;
+  txs.unshift({date: new Date().toLocaleString(), no: a.no, type, amount: amt, after: a.balance});
+  save('accounts', accounts); save('txs', txs);
+  $(amtId).value = ''; render();
+  notify(type + ' successful. New balance: ৳ ' + money(a.balance));
+}
+$('f-dep').onsubmit = e => { e.preventDefault(); move('Deposit', 'da', 'dm'); };
+$('f-wd').onsubmit  = e => { e.preventDefault(); move('Withdraw', 'wa', 'wm'); };
+
+document.querySelector('a.out').addEventListener('click', () => {
+  loggedIn = false; sessionStorage.removeItem('admin');
+});
+
+route();
+</script>
+</body>
+  </html>
